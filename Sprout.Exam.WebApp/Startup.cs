@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sprout.Exam.Business;
 using Sprout.Exam.Business.Services.Employee;
 using Sprout.Exam.DataAccess.Interfaces.Employee;
 using Sprout.Exam.DataAccess.Interfaces.Generic;
@@ -16,6 +17,7 @@ using Sprout.Exam.DataAccess.Interfaces.UnitOfWork;
 using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
+using System;
 
 namespace Sprout.Exam.WebApp
 {
@@ -51,9 +53,11 @@ namespace Sprout.Exam.WebApp
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
+
+            services.AddAutoMapper(typeof(MappingProfile));
+
             services.AddControllersWithViews();
             services.AddRazorPages();
-
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
