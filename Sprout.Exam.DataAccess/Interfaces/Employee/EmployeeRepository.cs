@@ -1,4 +1,4 @@
-﻿using Sprout.Exam.DataAccess.Interfaces.GenericRepository;
+﻿using Sprout.Exam.DataAccess.Interfaces.Generic;
 using Sprout.Exam.DataAccess.Models;
 using System;
 using System.Collections.Generic;

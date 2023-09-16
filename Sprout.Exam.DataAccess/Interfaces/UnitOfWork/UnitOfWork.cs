@@ -1,4 +1,5 @@
-﻿using Sprout.Exam.DataAccess.Interfaces.Employee;
+﻿using Microsoft.EntityFrameworkCore;
+using Sprout.Exam.DataAccess.Interfaces.Employee;
 using Sprout.Exam.DataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -19,13 +20,46 @@ namespace Sprout.Exam.DataAccess.Interfaces.UnitOfWork
 
         public IEmployeeRepository Employees { get; private set; }
 
-        public int Complete()
+        /// <summary>
+        /// Completes the unit of work, saving all repository changes to the underlying data-store.
+        /// </summary>
+        /// <returns><see cref="Task"/></returns>
+        public async Task CompleteAsync() => await _context.SaveChangesAsync();
+
+        private bool _disposed;
+
+        /// <summary>
+        /// Cleans up any resources being used.
+        /// </summary>
+        /// <returns><see cref="ValueTask"/></returns>
+        public async ValueTask DisposeAsync()
         {
-            return _context.SaveChanges();
+            await DisposeAsync(true);
+
+            // Take this object off the finalization queue to prevent 
+            // finalization code for this object from executing a second time.
+            GC.SuppressFinalize(this);
         }
-        public void Dispose()
+
+        /// <summary>
+        /// Cleans up any resources being used.
+        /// </summary>
+        /// <param name="disposing">Whether or not we are disposing</param> 
+        /// <returns><see cref="ValueTask"/></returns>
+        protected virtual async ValueTask DisposeAsync(bool disposing)
         {
-            _context.Dispose();
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    await _context.DisposeAsync();
+                }
+
+                // Dispose any unmanaged resources here...
+
+                _disposed = true;
+            }
         }
 
     }

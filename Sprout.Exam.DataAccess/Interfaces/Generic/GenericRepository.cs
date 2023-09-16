@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sprout.Exam.DataAccess.Interfaces.GenericRepository
+namespace Sprout.Exam.DataAccess.Interfaces.Generic
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

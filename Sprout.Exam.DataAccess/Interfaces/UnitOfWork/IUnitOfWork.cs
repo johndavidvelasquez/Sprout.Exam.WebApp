@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Sprout.Exam.DataAccess.Interfaces.UnitOfWork
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IAsyncDisposable
     {
         IEmployeeRepository Employees { get; }
-        int Complete();
+        Task CompleteAsync();
     }
 }
