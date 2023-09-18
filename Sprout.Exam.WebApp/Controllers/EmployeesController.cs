@@ -72,7 +72,7 @@ namespace Sprout.Exam.WebApp.Controllers
 
             if (!new Regex(@"^[0-9-]*$").IsMatch(input.Tin))
             {
-                ModelState.AddModelError(nameof(input.Tin), "Numerical and special character values are not allowed in TIN");
+                ModelState.AddModelError(nameof(input.Tin), "Only Numerical and hypen(-) characters are allowed in TIN");
             }
 
             if (ValidateAge(input.Birthdate))
@@ -109,7 +109,7 @@ namespace Sprout.Exam.WebApp.Controllers
 
             if (!new Regex(@"^[0-9-]*$").IsMatch(input.Tin))
             {
-                ModelState.AddModelError(nameof(input.Tin), "Numerical and special character values are not allowed in TIN");
+                ModelState.AddModelError(nameof(input.Tin), "Only Numerical and hypen(-) characters are allowed in TIN");
             }
 
             if (ValidateAge(input.Birthdate))
