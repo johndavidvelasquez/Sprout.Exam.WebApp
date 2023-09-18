@@ -15,12 +15,15 @@ namespace Sprout.Exam.Business
         {
             CreateMap<Employee, EmployeeDto>()
                 .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))
+                .ForMember(dest => dest.Birthdate, opt => opt.MapFrom(src => src.Birthdate.ToString("yyyy-MM-dd")))
                 .ReverseMap();
             CreateMap<Employee, CreateEmployeeDto>()
                 .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))
+                .ForMember(dest => dest.Birthdate, opt => opt.MapFrom(src => src.Birthdate.ToString("yyyy-MM-dd")))
                 .ReverseMap();
             CreateMap<Employee, EditEmployeeDto>()
                 .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))
+                .ForMember(dest => dest.Birthdate, opt => opt.MapFrom(src => src.Birthdate.ToString("yyyy-MM-dd")))
                 .ReverseMap();
         }
     }

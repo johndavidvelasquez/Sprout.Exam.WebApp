@@ -16,6 +16,7 @@ using Sprout.Exam.DataAccess.Interfaces.Generic;
 using Sprout.Exam.DataAccess.Interfaces.UnitOfWork;
 using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Data;
+using Sprout.Exam.WebApp.Middleware;
 using Sprout.Exam.WebApp.Models;
 using System;
 
@@ -107,6 +108,9 @@ namespace Sprout.Exam.WebApp
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalErrorHandlingMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -13,6 +13,7 @@ using EmployeeType = Sprout.Exam.Common.Enums.EmployeeType;
 using Sprout.Exam.Business.Services.Employee;
 using AutoMapper;
 using Sprout.Exam.Business;
+using System.Text.RegularExpressions;
 
 namespace Sprout.Exam.WebApp.Controllers
 {
@@ -62,8 +63,28 @@ namespace Sprout.Exam.WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(EditEmployeeDto input)
+        public async Task<IActionResult> Put([FromBody] EditEmployeeDto input)
         {
+            if (!new Regex(@"^[A-Za-z ]+$").IsMatch(input.FullName))
+            {
+                ModelState.AddModelError(nameof(input.FullName), "Numerical and special character values are not allowed in Full Name");
+            }
+
+            if (!new Regex(@"^[0-9-]*$").IsMatch(input.Tin))
+            {
+                ModelState.AddModelError(nameof(input.Tin), "Numerical and special character values are not allowed in TIN");
+            }
+
+            if (ValidateAge(input.Birthdate))
+            {
+                ModelState.AddModelError(nameof(input.Birthdate), $"Employee must be 18 years old or above");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
             Employee employee = _mapper.Map<Employee>(input);
 
             var updated = await _employeeService.Edit(employee);
@@ -79,8 +100,29 @@ namespace Sprout.Exam.WebApp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post(CreateEmployeeDto input)
+        public async Task<IActionResult> Post([FromBody] CreateEmployeeDto input)
         {
+            if (!new Regex(@"^[A-Za-z ]+$").IsMatch(input.FullName))
+            {
+                ModelState.AddModelError(nameof(input.FullName), "Numerical and special character values are not allowed in Full Name");
+            }
+
+            if (!new Regex(@"^[0-9-]*$").IsMatch(input.Tin))
+            {
+                ModelState.AddModelError(nameof(input.Tin), "Numerical and special character values are not allowed in TIN");
+            }
+
+            if (ValidateAge(input.Birthdate))
+            {
+                ModelState.AddModelError(nameof(input.Birthdate), $"Employee must be 18 years old or above");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
+
             Employee newEmployee = new Employee();
             newEmployee = _mapper.Map<Employee>(input);
 
@@ -127,6 +169,19 @@ namespace Sprout.Exam.WebApp.Controllers
 
             return Ok(salary);
 
+        }
+
+
+        private bool ValidateAge(DateTime dateOfBirth)
+        {
+            if (dateOfBirth == null)
+                return false;   
+            DateTime today = DateTime.Today;
+            int age = today.Year - dateOfBirth.Year;
+            if (dateOfBirth > today.AddYears(-age))
+                age--;
+
+            return age >= 18 ? false : true;
         }
 
     }
