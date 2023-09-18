@@ -8,10 +8,10 @@ namespace Sprout.Exam.Business
 {
     public class ContractualEmployee : IEmployee
     {
+        private decimal PerDaySalary = 500; // Monthly
         public decimal CalculateSalary(decimal days)
         {
-
-            return 2;
+            return Math.Round(this.PerDaySalary * days, 2);
         }
     }
 }

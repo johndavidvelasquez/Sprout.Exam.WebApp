@@ -33,7 +33,7 @@ namespace Sprout.Exam.Business.Services.Employee
 
         public decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal days)
         {
-            var empFactory = _employeeFactory.GetEmployee(Common.Enums.EmployeeType.Regular);
+            var empFactory = _employeeFactory.GetEmployee(employeeType);
             return empFactory.CalculateSalary(days); 
         }
     }
