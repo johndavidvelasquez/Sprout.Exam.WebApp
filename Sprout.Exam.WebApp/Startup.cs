@@ -9,8 +9,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sprout.Exam.Business;
+using Sprout.Exam.Business.Services.Employee;
+using Sprout.Exam.DataAccess.Interfaces.Employee;
+using Sprout.Exam.DataAccess.Interfaces.Generic;
+using Sprout.Exam.DataAccess.Interfaces.UnitOfWork;
+using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Data;
+using Sprout.Exam.WebApp.Middleware;
 using Sprout.Exam.WebApp.Models;
+using System;
 
 namespace Sprout.Exam.WebApp
 {
@@ -30,6 +38,11 @@ namespace Sprout.Exam.WebApp
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDbContext<SproutExamDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -41,8 +54,28 @@ namespace Sprout.Exam.WebApp
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
+
+            services.AddAutoMapper(typeof(MappingProfile));
+
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            
+            
+            services.AddTransient<IEmployeeService, EmployeeService>();
+
+
+            // Factories
+            services.AddTransient<IEmployeeFactory, EmployeeFactory>();
+
+            services.AddScoped<RegularEmployee>()
+                        .AddScoped<IEmployee, RegularEmployee>(s => s.GetService<RegularEmployee>());
+
+            services.AddScoped<ContractualEmployee>()
+                        .AddScoped<IEmployee, ContractualEmployee>(s => s.GetService<ContractualEmployee>());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -75,6 +108,9 @@ namespace Sprout.Exam.WebApp
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalErrorHandlingMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

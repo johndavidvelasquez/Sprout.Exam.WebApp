@@ -75,15 +75,38 @@ export class EmployeeCreate extends Component {
         body: JSON.stringify(this.state)
     };
     const response = await fetch('api/employees',requestOptions);
+    var message = "";
+    var validationErrorRes = await response.json();
 
     if(response.status === 201){
         this.setState({ loadingSave: false });
         alert("Employee successfully saved");
         this.props.history.push("/employees/index");
     }
+    else if(response.status === 400) {
+      
+       if(validationErrorRes.title === "One or more validation errors occurred.")
+       {
+        for (const key in validationErrorRes.errors) {
+          message += `${validationErrorRes.errors[key]}\n`;
+        }
+       }
+
+       alert(message);
+    }
+    else if(response.status === 422) {
+       for (const key in validationErrorRes) {
+         message += `${validationErrorRes[key]}\n`;
+        console.log(key);
+      }
+
+
+      alert(message);
+   }
     else{
         alert("There was an error occured.");
     }
+    this.setState({ loadingSave: false });
   }
 
 }

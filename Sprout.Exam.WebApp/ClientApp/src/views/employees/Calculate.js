@@ -65,11 +65,11 @@ export class EmployeeCalculate extends Component {
 { this.state.typeId === 1? 
 <div className='form-group col-md-6'>
   <label htmlFor='inputAbsentDays4'>Absent Days: </label>
-  <input type='text' className='form-control' id='inputAbsentDays4' onChange={this.handleChange.bind(this)} value={this.state.absentDays} name="absentDays" placeholder='Absent Days' />
+  <input type='number' className='form-control' id='inputAbsentDays4' onChange={e => { this.setState({ absentDays : e.target.value }) }} value={this.state.absentDays} name="absentDays" placeholder='Absent Days' />
 </div> :
 <div className='form-group col-md-6'>
   <label htmlFor='inputWorkDays4'>Worked Days: </label>
-  <input type='text' className='form-control' id='inputWorkDays4' onChange={this.handleChange.bind(this)} value={this.state.workedDays} name="workedDays" placeholder='Worked Days' />
+  <input type='number' className='form-control' id='inputWorkDays4' onChange={e => { this.setState({ workedDays : e.target.value }) }} value={this.state.workedDays} name="workedDays" placeholder='Worked Days' />
 </div>
 }
 </div>
@@ -97,6 +97,7 @@ export class EmployeeCalculate extends Component {
 
   async calculateSalary() {
     this.setState({ loadingCalculate: true });
+    console.log(this.state);
     const token = await authService.getAccessToken();
     const requestOptions = {
         method: 'POST',
