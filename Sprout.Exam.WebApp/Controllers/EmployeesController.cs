@@ -50,6 +50,9 @@ namespace Sprout.Exam.WebApp.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var employee = await _employeeService.GetById(id);
+            if(employee == null)
+                return NotFound();
+
             var result = _mapper.Map<EmployeeDto>(employee);
             return Ok(result);
         }
@@ -112,22 +115,17 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <param name="workedDays"></param>
         /// <returns></returns>
         [HttpPost("{id}/calculate")]
-        public async Task<IActionResult> Calculate(int id,decimal absentDays,decimal workedDays)
+        public async Task<IActionResult> Calculate(CalculateSalaryDto input)
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == id));
+            var employee = await _employeeService.GetById(input.Id);
+            if (employee == null)
+                return NotFound();
 
-            if (result == null) return NotFound();
-            var type = (EmployeeType) result.TypeId;
-            return type switch
-            {
-                EmployeeType.Regular =>
-                    //create computation for regular.
-                    Ok(25000),
-                EmployeeType.Contractual =>
-                    //create computation for contractual.
-                    Ok(20000),
-                _ => NotFound("Employee Type not found")
-            };
+            var type = (EmployeeType) employee.EmployeeTypeId;
+
+            var salary = _employeeService.CalculateSalary(type, input.absentDays, input.workedDays);
+
+            return Ok(salary);
 
         }
 

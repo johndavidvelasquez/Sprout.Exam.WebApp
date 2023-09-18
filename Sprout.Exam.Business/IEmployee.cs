@@ -8,6 +8,6 @@ namespace Sprout.Exam.Business
 {
     public interface IEmployee
     {
-        decimal CalculateSalary(decimal days);
+        decimal CalculateSalary(decimal absentDays, decimal workedDays);
     }
 }

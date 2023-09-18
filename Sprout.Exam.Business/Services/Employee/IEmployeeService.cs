@@ -14,6 +14,6 @@ namespace Sprout.Exam.Business.Services.Employee
         Task<DataAccess.Models.Employee> Add(DataAccess.Models.Employee employee);
         Task<DataAccess.Models.Employee> Edit(DataAccess.Models.Employee employee);
         Task<DataAccess.Models.Employee> Delete(int employeeId);
-        decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal days);
+        decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal absentDays, decimal workedDays);
     }
 }

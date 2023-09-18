@@ -69,10 +69,10 @@ namespace Sprout.Exam.Business.Services.Employee
             return employeeToDelete;
         }
 
-        public decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal days)
+        public decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal absentDays, decimal workedDays)
         {
             var empFactory = _employeeFactory.GetEmployee(employeeType);
-            return empFactory.CalculateSalary(days); 
+            return empFactory.CalculateSalary(absentDays, workedDays); 
         }
     }
 }
