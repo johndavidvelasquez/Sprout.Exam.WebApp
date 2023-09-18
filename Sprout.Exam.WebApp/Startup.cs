@@ -67,6 +67,15 @@ namespace Sprout.Exam.WebApp
             services.AddTransient<IEmployeeService, EmployeeService>();
 
 
+            // Factories
+            services.AddTransient<IEmployeeFactory, EmployeeFactory>();
+
+            services.AddScoped<RegularEmployee>()
+                        .AddScoped<IEmployee, RegularEmployee>(s => s.GetService<RegularEmployee>());
+
+            services.AddScoped<ContractualEmployee>()
+                        .AddScoped<IEmployee, ContractualEmployee>(s => s.GetService<ContractualEmployee>());
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

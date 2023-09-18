@@ -11,5 +11,6 @@ namespace Sprout.Exam.Business.Services.Employee
     {
         Task<IEnumerable<DataAccess.Models.Employee>> GetAll();
         Task Add(DataAccess.Models.Employee employee);
+        decimal CalculateSalary(Common.Enums.EmployeeType employeeType, decimal days);
     }
 }
