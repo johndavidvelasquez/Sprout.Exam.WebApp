@@ -14,6 +14,7 @@ namespace Sprout.Exam.Business
         public MappingProfile()
         {
             CreateMap<Employee, EmployeeDto>()
+                .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))
                 .ReverseMap();
             CreateMap<Employee, CreateEmployeeDto>()
                 .ForMember(dest => dest.TypeId, opt => opt.MapFrom(src => src.EmployeeTypeId))

@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Sprout.Exam.Business.DataTransferObjects;
 using Sprout.Exam.Common.Enums;
+using Sprout.Exam.DataAccess.Interfaces.UnitOfWork;
+using Sprout.Exam.DataAccess.Models;
+using EmployeeType = Sprout.Exam.Common.Enums.EmployeeType;
+using Sprout.Exam.Business.Services.Employee;
+using AutoMapper;
+using Sprout.Exam.Business;
 
 namespace Sprout.Exam.WebApp.Controllers
 {
@@ -16,6 +22,14 @@ namespace Sprout.Exam.WebApp.Controllers
     public class EmployeesController : ControllerBase
     {
 
+        private readonly IEmployeeService _employeeService;
+        private readonly IMapper _mapper;
+        public EmployeesController(IEmployeeService employeeService, IMapper mapper)
+        {
+            _employeeService = employeeService;
+            _mapper = mapper;
+        }
+
         /// <summary>
         /// Refactor this method to go through proper layers and fetch from the DB.
         /// </summary>
@@ -23,7 +37,8 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList);
+            var employees = await _employeeService.GetAll();
+            var result = _mapper.Map<List<EmployeeDto>>(employees);
             return Ok(result);
         }
 
@@ -34,7 +49,8 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == id));
+            var employee = await _employeeService.GetById(id);
+            var result = _mapper.Map<EmployeeDto>(employee);
             return Ok(result);
         }
 
@@ -45,13 +61,14 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(EditEmployeeDto input)
         {
-            var item = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == input.Id));
-            if (item == null) return NotFound();
-            item.FullName = input.FullName;
-            item.Tin = input.Tin;
-            item.Birthdate = input.Birthdate.ToString("yyyy-MM-dd");
-            item.TypeId = input.TypeId;
-            return Ok(item);
+            Employee employee = _mapper.Map<Employee>(input);
+
+            var updated = await _employeeService.Edit(employee);
+            
+            if(updated == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<EmployeeDto>(updated));
         }
 
         /// <summary>
@@ -61,19 +78,12 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateEmployeeDto input)
         {
+            Employee newEmployee = new Employee();
+            newEmployee = _mapper.Map<Employee>(input);
 
-           var id = await Task.FromResult(StaticEmployees.ResultList.Max(m => m.Id) + 1);
+            await _employeeService.Add(newEmployee);
 
-            StaticEmployees.ResultList.Add(new EmployeeDto
-            {
-                Birthdate = input.Birthdate.ToString("yyyy-MM-dd"),
-                FullName = input.FullName,
-                Id = id,
-                Tin = input.Tin,
-                TypeId = input.TypeId
-            });
-
-            return Created($"/api/employees/{id}", id);
+            return Created($"/api/employees/{newEmployee.Id}", newEmployee.Id);
         }
 
 
@@ -84,9 +94,11 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == id));
-            if (result == null) return NotFound();
-            StaticEmployees.ResultList.RemoveAll(m => m.Id == id);
+            var delete = await _employeeService.Delete(id);
+
+            if (delete == null)
+                return NotFound();
+
             return Ok(id);
         }
 
